@@ -281,18 +281,20 @@ with tab1:
                 snippet = match.group(2)
                 href = get_pdf_href(pdf_file_name)
                 dl_attr = f"download='{pdf_file_name}'"
+                btn_html = f"<a href='{href}' {dl_attr} class='pdf-btn'>📄 View PDF Document</a>"
             else:
-                title = f"[Doc {row['ID']}.pdf]"
+                title = f"Kalimat #{row['ID']}"
                 snippet = text_full
+                btn_html = "" # Tidak ada tombol untuk text sederhana
             
-            if len(snippet) > 200:
+            if len(snippet) > 200 and dataset_choice != "Dataset Simpel (Contoh)":
                 snippet = snippet[:200] + "..."
                 
             st.markdown(f"""
             <div class='doc-card'>
                 <span class='doc-num'>#{row['ID']}</span> 
                 <span class='doc-title'><b>{title}</b><br>{snippet}</span><br>
-                <a href='{href}' {dl_attr} class='pdf-btn'>📄 View PDF Document</a>
+                {btn_html}
             </div>
             """, unsafe_allow_html=True)
 
@@ -334,7 +336,7 @@ with tab1:
                             title = f"[{match.group(1)}]"
                             content = match.group(2)
                         else:
-                            title = f"[Doc {row['ID']}.pdf]"
+                            title = f"Kalimat #{row['ID']}"
                             content = full_text
 
                         # Highlight Query
@@ -353,12 +355,12 @@ with tab1:
                             
                         # Build Row HTML to bypass complex Streamlit column padding behaviors inside loops
                         
-                        pdf_href = "#"
-                        dl_attr = ""
+                        action_col = ""
                         if match:
                             pdf_file_name = match.group(1)
                             pdf_href = get_pdf_href(pdf_file_name)
                             dl_attr = f"download='{pdf_file_name}'"
+                            action_col = f"<a href='{pdf_href}' {dl_attr} class='pdf-btn' style='font-size:0.75rem; padding: 6px 12px; margin-top:0;'>📄 View PDF</a>"
                             
                         row_html = f"""
                         <div style='display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #27272a;'>
@@ -369,7 +371,7 @@ with tab1:
                             </div>
                             <div style='width: 15%; color: #e4e6ed;'>{row['Skor_Kemiripan']:.4f}</div>
                             <div style='width: 15%;'>
-                                <a href='{pdf_href}' {dl_attr} class='pdf-btn' style='font-size:0.75rem; padding: 6px 12px; margin-top:0;'>📄 View PDF</a>
+                                {action_col}
                             </div>
                         </div>
                         """
